@@ -129,7 +129,7 @@ class GestionScreen extends StatelessWidget {
             const SizedBox(width: 16),
             CircleAvatar(
               radius: 25,
-              backgroundColor: color.withOpacity(0.2),
+              backgroundColor: color.withValues(alpha: 0.2),
               child: Icon(icon, color: color, size: 28),
             ),
             const SizedBox(width: 16),

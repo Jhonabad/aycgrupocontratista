@@ -19,7 +19,7 @@ class _AsistenciaInfoState extends State<AsistenciaInfo> {
 
   int? _idProyectoSeleccionado;
   List<Map<String, dynamic>> _proyectos = []; // proyectos del usuario
-final api_proyect = AsistenciaAdminApi();
+
   @override
   void initState() {
     super.initState();
@@ -68,7 +68,6 @@ final api_proyect = AsistenciaAdminApi();
     }
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,8 +134,7 @@ final api_proyect = AsistenciaAdminApi();
 
                   // 🚫 NO Expanded — que rompe el dropdown
                   // 🔥 En su lugar usamos ConstrainedBox
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 250),
+                  Flexible(
                     child: Text(
                       p['nombre_proyecto'],
                       overflow: TextOverflow.ellipsis,
@@ -249,7 +247,11 @@ final api_proyect = AsistenciaAdminApi();
       if (a["fecha_entrada"] != null && a["fecha_salida"] != null) {
         try {
           final entrada = DateTime.parse("2024-01-01 ${a["fecha_entrada"]}");
-          final salida = DateTime.parse("2024-01-01 ${a["fecha_salida"]}");
+          var salida = DateTime.parse("2024-01-01 ${a["fecha_salida"]}");
+          // Manejar turnos nocturnos (salida antes de entrada)
+          if (salida.isBefore(entrada)) {
+            salida = salida.add(const Duration(days: 1));
+          }
           total += salida.difference(entrada);
         } catch (_) {}
       }

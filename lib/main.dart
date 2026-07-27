@@ -86,7 +86,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final rol = usuario['id_rol'] == 1 ? 1 : 2;
 
-      // 🔹 Redirigir a la pantalla principal
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -100,8 +99,15 @@ class _LoginScreenState extends State<LoginScreen> {
       debugPrint('⚠️ Error de conexión Supabase: $error');
       setState(() => _error = 'Error al conectar con el servidor.');
     } finally {
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _correoController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override

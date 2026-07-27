@@ -21,8 +21,23 @@ class _SolicitarPermisoScreenState extends State<SolicitarPermisoScreen> {
 
   // 🔹 Convierte dd/mm/yyyy → yyyy-mm-dd
   String _convertirFecha(String fecha) {
-    final partes = fecha.split('/');
-    return "${partes[2]}-${partes[1].padLeft(2, '0')}-${partes[0].padLeft(2, '0')}";
+    try {
+      final partes = fecha.split('/');
+      if (partes.length != 3) throw FormatException('Formato inválido');
+      return "${partes[2]}-${partes[1].padLeft(2, '0')}-${partes[0].padLeft(2, '0')}";
+    } catch (e) {
+      debugPrint('❌ Error convirtiendo fecha: $e');
+      return fecha;
+    }
+  }
+
+  @override
+  void dispose() {
+    _motivoController.dispose();
+    _fechaInicioController.dispose();
+    _fechaFinController.dispose();
+    _tipoPermisoController.dispose();
+    super.dispose();
   }
 
   @override

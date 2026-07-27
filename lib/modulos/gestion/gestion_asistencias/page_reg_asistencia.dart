@@ -15,7 +15,6 @@ class PageRegistrarAsistenciaAdmin extends StatefulWidget {
 class _PageRegistrarAsistenciaAdminState
     extends State<PageRegistrarAsistenciaAdmin> {
   final _formKey = GlobalKey<FormState>();
-  final _asistenciaApi = AsistenciaAdminApiUser();
 
   final TextEditingController _fechaController = TextEditingController();
   final TextEditingController _horaController = TextEditingController();
@@ -73,7 +72,7 @@ class _PageRegistrarAsistenciaAdminState
   Future<void> _cargarObras(int idUsuario) async {
     try {
       final proyectos =
-      await _asistenciaApi.obtenerProyectosPorUsuarioAdmin(idUsuario);
+          await AsistenciaAdminApiUser.obtenerProyectosPorUsuarioAdmin(idUsuario);
       _obras = proyectos.map<Map<String, dynamic>>((p) {
         return {
           "id_proyecto": p["id_proyecto"],

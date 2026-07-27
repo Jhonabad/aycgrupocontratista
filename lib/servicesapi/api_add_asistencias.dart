@@ -1,15 +1,12 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import 'supabase_config.dart';
+
 class AsistenciaAdminApiUser {
-  static const Map<String, String> headers = {
-    'apikey':
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaXVpc2Zxa2JxZ2FqZ2N0bGFlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDYxNzk1OSwiZXhwIjoyMDc2MTkzOTU5fQ.lh_lGVO_CFFyZRsnrOFyjPJ7Bl5wrN8m00xQg7_yU6s',
-    'Authorization':
-    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaXVpc2Zxa2JxZ2FqZ2N0bGFlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDYxNzk1OSwiZXhwIjoyMDc2MTkzOTU5fQ.lh_lGVO_CFFyZRsnrOFyjPJ7Bl5wrN8m00xQg7_yU6s',
-    'Content-Type': 'application/json',
-  };
+  static Map<String, String> get headers => SupabaseConfig.headers;
 
   // ===============================================================
   // VALIDAR ENTRADA HOY
@@ -31,8 +28,8 @@ class AsistenciaAdminApiUser {
       final resp =
       await http.post(url, headers: headers, body: jsonEncode(body));
 
-      print("📡 validarEntradaHoy → ${resp.statusCode}");
-      print("📩 Respuesta: ${resp.body}");
+      debugPrint("📡 validarEntradaHoy → ${resp.statusCode}");
+      debugPrint("📩 Respuesta: ${resp.body}");
 
       if (resp.statusCode != 200) return false;
 
@@ -51,7 +48,7 @@ class AsistenciaAdminApiUser {
 
       return false;
     } catch (e) {
-      print("❌ Error validar entrada hoy: $e");
+      debugPrint("❌ Error validar entrada hoy: $e");
       return false;
     }
   }
@@ -84,9 +81,9 @@ class AsistenciaAdminApiUser {
       final resp =
       await http.post(url, headers: headers, body: jsonEncode(body));
 
-      print("📡 Registrar Entrada → ${resp.statusCode}");
-      print("📅 Fecha enviada: $fechaHoraLocal");
-      print("📩 ${resp.body}");
+      debugPrint("📡 Registrar Entrada → ${resp.statusCode}");
+      debugPrint("📅 Fecha enviada: $fechaHoraLocal");
+      debugPrint("📩 ${resp.body}");
 
       return {
         "success": resp.statusCode == 200 || resp.statusCode == 204,
@@ -125,9 +122,9 @@ class AsistenciaAdminApiUser {
       final resp =
       await http.post(url, headers: headers, body: jsonEncode(body));
 
-      print("📡 Registrar Salida → ${resp.statusCode}");
-      print("📅 Fecha enviada: $fechaHoraLocal");
-      print("📩 ${resp.body}");
+      debugPrint("📡 Registrar Salida → ${resp.statusCode}");
+      debugPrint("📅 Fecha enviada: $fechaHoraLocal");
+      debugPrint("📩 ${resp.body}");
 
       return {
         "success": resp.statusCode == 200 || resp.statusCode == 204,
@@ -139,7 +136,7 @@ class AsistenciaAdminApiUser {
   }
 
   // LISTAR PROYECTOS DE UN USUARIO
-    Future<List<Map<String, dynamic>>> obtenerProyectosPorUsuario(
+  static Future<List<Map<String, dynamic>>> obtenerProyectosPorUsuario(
       int idUsuario) async {
     final url = Uri.parse(
       'https://xciuisfqkbqgajgctlae.supabase.co/rest/v1/rpc/fn_listar_proyectos_por_usuario',
@@ -151,18 +148,20 @@ class AsistenciaAdminApiUser {
       final response =
       await http.post(url, headers: headers, body: jsonEncode(body));
 
-      print("📡 Listar proyectos usuario → ${response.statusCode}");
-      print("📩 ${response.body}");
+      debugPrint("📡 Listar proyectos usuario → ${response.statusCode}");
+      debugPrint("📩 ${response.body}");
 
       if (response.statusCode != 200) return [];
 
       final data = jsonDecode(response.body);
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      print("❌ Error obtener proyectos: $e");
+      debugPrint("❌ Error obtener proyectos: $e");
       rethrow;
     }
-  } Future<List<Map<String, dynamic>>> obtenerProyectosPorUsuarioAdmin(
+  }
+
+  static Future<List<Map<String, dynamic>>> obtenerProyectosPorUsuarioAdmin(
       int idUsuario) async {
     final url = Uri.parse(
       'https://xciuisfqkbqgajgctlae.supabase.co/rest/v1/rpc/fn_listar_proyectos_por_usuario_admin',
@@ -174,15 +173,15 @@ class AsistenciaAdminApiUser {
       final response =
       await http.post(url, headers: headers, body: jsonEncode(body));
 
-      print("📡 Listar proyectos usuario → ${response.statusCode}");
-      print("📩 ${response.body}");
+      debugPrint("📡 Listar proyectos usuario → ${response.statusCode}");
+      debugPrint("📩 ${response.body}");
 
       if (response.statusCode != 200) return [];
 
       final data = jsonDecode(response.body);
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      print("❌ Error obtener proyectos: $e");
+      debugPrint("❌ Error obtener proyectos: $e");
       rethrow;
     }
   }
@@ -212,7 +211,7 @@ class AsistenciaAdminApiUser {
         );
 
         if (entrada["data"].toString().contains("asistencia abierta")) {
-          print("⚠️ Detección automática: cambiar a registro de salida");
+          debugPrint("⚠️ Detección automática: cambiar a registro de salida");
           final salida = await registrarSalida(
             idUsuario: idUsuario,
             idProyecto: idProyecto,
@@ -249,7 +248,7 @@ class AsistenciaAdminApiUser {
             : "❌ Error al registrar salida",
       };
     } catch (e) {
-      print("❌ Error registrar asistencia usuario: $e");
+      debugPrint("❌ Error registrar asistencia usuario: $e");
       return {"success": false, "mensaje": "Error interno: $e"};
     }
   }
@@ -280,12 +279,12 @@ class AsistenciaAdminApiUser {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return 'https://xciuisfqkbqgajgctlae.supabase.co/storage/v1/object/public/asistencias_fotos/$fileName';
       } else {
-        print('❌ Error subiendo imagen: ${response.statusCode}');
-        print(response.body);
+        debugPrint('❌ Error subiendo imagen: ${response.statusCode}');
+        debugPrint(response.body);
         return null;
       }
     } catch (e) {
-      print('❌ Error subirFotoAsistencia: $e');
+      debugPrint('❌ Error subirFotoAsistencia: $e');
       return null;
     }
   }

@@ -53,7 +53,6 @@ class _WireframeScreenState extends State<WireframeScreen>
   String? _direccionActual;
 
 
-  late final List<Widget> _pages;
   late final List<String> _titles;
 
   @override
@@ -72,19 +71,8 @@ class _WireframeScreenState extends State<WireframeScreen>
     });
 
     if (widget.rol == 1) {
-      _pages = [
-        _buildDashboard(),
-        PermisosScreen(usuario: widget.usuario),
-        PageUserScreen(usuario: widget.usuario),
-        const GestionScreen(),
-      ];
       _titles = ['Asistencia', 'Permisos', 'Usuario', 'Gestión'];
     } else {
-      _pages = [
-        _buildDashboard(),
-        PermisosScreen(usuario: widget.usuario),
-        PageUserScreen(usuario: widget.usuario),
-      ];
       _titles = ['Asistencia', 'Permisos', 'Usuario'];
     }
   }
@@ -145,14 +133,12 @@ class _WireframeScreenState extends State<WireframeScreen>
   Future<void> _initializeCamera({required CameraDescription cameraDescription}) async {
     debugPrint("🎥 Inicializando cámara: ${cameraDescription.lensDirection}");
 
-    if (_cameraController != null && _cameraController!.value.isInitialized) {
-      debugPrint("⚠️ Cámara ya inicializada, se omite reinicio");
-      return;
-    }
+    // Disponer controller anterior si existe
+    await _cameraController?.dispose();
+    _cameraController = null;
+    _isCameraReady = false;
 
     try {
-      await _cameraController?.dispose();
-
       final controller = CameraController(
         cameraDescription,
         ResolutionPreset.medium,
@@ -251,8 +237,11 @@ class _WireframeScreenState extends State<WireframeScreen>
 
     if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
       await _cameraController?.dispose();
+      _cameraController = null;
+      _isCameraReady = false;
+      _isCameraOn = false;
     } else if (state == AppLifecycleState.resumed) {
-      if (_cameraController == null || !_cameraController!.value.isInitialized) {
+      if (_cameraController == null && _currentCamera != null) {
         debugPrint("🔁 Reanudando cámara...");
         await _initializeCamera(cameraDescription: _currentCamera!);
       } else {
@@ -283,7 +272,15 @@ class _WireframeScreenState extends State<WireframeScreen>
         elevation: 0,
       ),
       body: SafeArea(
-        child: IndexedStack(index: _selectedIndex, children: _pages),
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: [
+            _buildDashboard(),
+            PermisosScreen(usuario: widget.usuario),
+            PageUserScreen(usuario: widget.usuario),
+            if (widget.rol == 1) const GestionScreen(),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -526,7 +523,7 @@ class _WireframeScreenState extends State<WireframeScreen>
   Widget _fechaHoraWidget() => Container(
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     decoration: BoxDecoration(
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withValues(alpha: 0.55),
       borderRadius: BorderRadius.circular(10),
     ),
     child: Column(

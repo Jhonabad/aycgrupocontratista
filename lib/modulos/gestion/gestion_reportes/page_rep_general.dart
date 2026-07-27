@@ -307,7 +307,7 @@ class _PageReporteGeneralState extends State<PageReporteGeneral> {
       width: MediaQuery.of(context).size.width / 2 - 20,
       child: Card(
         elevation: 2,
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),

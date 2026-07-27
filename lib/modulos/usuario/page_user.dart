@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:aycgcsac/modulos/usuario/page_edit_user.dart';
+import 'package:aycgcsac/main.dart';
 import '../../servicesapi/api_info_user.dart';
 
 class PageUserScreen extends StatefulWidget {
@@ -172,7 +173,7 @@ class _PageUserScreenState extends State<PageUserScreen> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -256,7 +257,11 @@ class _PageUserScreenState extends State<PageUserScreen> {
           Center(
             child: ElevatedButton.icon(
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
               },
               icon: const Icon(Icons.logout, color: Colors.white),
               label: const Text("Cerrar sesión",

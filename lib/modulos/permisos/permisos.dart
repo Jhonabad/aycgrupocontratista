@@ -11,40 +11,32 @@ class PermisosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final int idUsuario = usuario['id_usuario'];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(''),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _botonPrincipal(
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _botonPrincipal(
+            context,
+            text: 'SOLICITAR PERMISO',
+            onPressed: () => Navigator.push(
               context,
-              text: 'SOLICITAR PERMISO',
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => SolicitarPermisoScreen(idUsuario: idUsuario),
-                ),
+              MaterialPageRoute(
+                builder: (_) => SolicitarPermisoScreen(idUsuario: idUsuario),
               ),
             ),
-            const SizedBox(height: 20),
-            _botonPrincipal(
+          ),
+          const SizedBox(height: 20),
+          _botonPrincipal(
+            context,
+            text: 'HISTORIAL DE PERMISOS',
+            onPressed: () => Navigator.push(
               context,
-              text: 'HISTORIAL DE PERMISOS',
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PageHistorialPermisos(idUsuario: idUsuario),
-                ),
+              MaterialPageRoute(
+                builder: (_) => PageHistorialPermisos(idUsuario: idUsuario),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

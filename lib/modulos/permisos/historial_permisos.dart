@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,6 +15,7 @@ class PageHistorialPermisos extends StatefulWidget {
 class _PageHistorialPermisosState extends State<PageHistorialPermisos> {
   final AuthServicesPermisos _permisoService = AuthServicesPermisos();
   final supabase = Supabase.instance.client;
+  StreamSubscription? _streamSubscription;
 
   List<Map<String, dynamic>> _permisos = [];
   List<Map<String, dynamic>> _permisosFiltrados = [];
@@ -40,7 +42,7 @@ class _PageHistorialPermisosState extends State<PageHistorialPermisos> {
   int? _ultimoNotificado;
 
   void _escucharCambiosEnPermisos() {
-    supabase
+    _streamSubscription = supabase
         .from('permisos')
         .stream(primaryKey: ['id_permisos'])
         .eq('id_usuario', widget.idUsuario)
@@ -83,6 +85,12 @@ class _PageHistorialPermisosState extends State<PageHistorialPermisos> {
           .toList();
     }
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -139,14 +147,18 @@ class _PageHistorialPermisosState extends State<PageHistorialPermisos> {
                   if (estado == 'Aprobado') colorEstado = Colors.green;
                   if (estado == 'Rechazado') colorEstado = Colors.redAccent;
 
-                  final inicio = dateFormat.format(DateTime.parse(
-                      p['fechas_solicitadas']
-                          .split(',')[0]
-                          .replaceAll('[', '')));
-                  final fin = dateFormat.format(DateTime.parse(
-                      p['fechas_solicitadas']
-                          .split(',')[1]
-                          .replaceAll(')', '')));
+                  String inicio = '-';
+                  String fin = '-';
+                  try {
+                    final fechas = p['fechas_solicitadas']?.toString() ?? '';
+                    final partes = fechas.split(',');
+                    if (partes.length >= 2) {
+                      inicio = dateFormat.format(DateTime.parse(
+                          partes[0].replaceAll('[', '').trim()));
+                      fin = dateFormat.format(DateTime.parse(
+                          partes[1].replaceAll(')', '').trim()));
+                    }
+                  } catch (_) {}
 
                   return Card(
                     shape: RoundedRectangleBorder(
